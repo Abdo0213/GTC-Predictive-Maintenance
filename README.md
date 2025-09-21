@@ -30,8 +30,7 @@ This will allow engineers or operations staff to upload sensor logs or recent ma
 - Dropped **constant-value** columns (columns with a single unique value).
 - Calculated training **RUL** as `max_cycle - time_in_cycles` and **capped RUL at 125** cycles.
 - Set reproducibility seeds (`PYTHONHASHSEED`, `random`, `numpy`, `tensorflow`) with `SEED_VALUE = 42`.
----
-
+  
 #### EDA & feature building
 - Basic dataset inspection (shapes, per-engine cycles, feature distributions).
 - Selected feature columns by excluding `engine_id`, `time_in_cycles`, and `RUL`.
@@ -41,6 +40,8 @@ This will allow engineers or operations staff to upload sensor logs or recent ma
 - Chosen `sequence_length = 50`.
 - Scaled features using `MinMaxScaler` (fitted on training features and applied to test features).
 - For the test set, extracted the last `sequence_length` measurements per engine; shorter sequences are zero-padded at the beginning.
+
+---
 
 #### Model development
 - Built an LSTM regression model (TensorFlow / Keras) with this architecture:
@@ -78,33 +79,12 @@ This will allow engineers or operations staff to upload sensor logs or recent ma
    - Predict on test sequences, compute RMSE, R², NASA score.
 6. **Deployment via Web Interface**
    - Heading present in notebook; deployment implementation not completed.
-
-
-## Next steps (not implemented in the notebook)
-- Hyperparameter tuning and model optimization (search and validation).
-- Complete deployment (frontend/API) as referenced by the notebook heading.
-- More advanced feature engineering, cross-validation, and experiment tracking.
 ---
 
-## Submission scope — Current status (Data Preparation only)
+## Submission scope — Current status (EDA)
 
-**Important:** the purpose of this submission is to deliver the *Data Preparation* stage **only**.  
-All items listed below under "Completed (this submission)" are implemented in the notebook and are what should be reviewed now. Other sections in the notebook (model training, evaluation, deployment) exist as development work but are **not** part of the deliverable and remain in progress.
-
-### Completed 
-- Data files loaded from `CMaps/`:
-  - `train_FD001.txt`, `test_FD001.txt`, `RUL_FD001.txt`
-- Column definitions added: `engine_id`, `time_in_cycles`, `op_setting_1..3`, `sensor_1..sensor_21`
-- Dropped non-informative (constant) columns (`nunique() == 1`)
-- Calculated training **RUL** as `max_cycle - time_in_cycles`
-- **Capped training RUL at 125** (clipped upper bound) and added `RUL` column to `train_df`
-- Reproducibility: `SEED_VALUE = 42` applied to `PYTHONHASHSEED`, Python `random`, `numpy`, and `tensorflow`
-- Feature columns selected (excluded `engine_id`, `time_in_cycles`, `RUL`)
-- Feature scaling with `MinMaxScaler()` — fitted on training data and applied to test data
-- Implemented `generate_sequences(df, sequence_length, feature_cols)` for sliding-window sequence creation
-  - `sequence_length = 50` (used consistently)
-- Test set preparation: extracted last 50 cycles per engine; zero-padded shorter engines to length 50
-- Created `X_train_lstm`, `y_train_lstm`, `X_test_lstm`, `y_test_lstm` (shapes printed in the notebook)
+**Important:** the purpose of this submission is to deliver the *EDA* stage.  
+Other sections in the notebook (model training, evaluation, deployment) exist as development work but are **not** part of the deliverable and remain in progress.
 
 ### Not part of this submission (work in progress)
 - Hyperparameter tuning, model checkpointing, or experiment tracking
