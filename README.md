@@ -25,71 +25,39 @@ This will allow engineers or operations staff to upload sensor logs or recent ma
 ## Work completed so far
 
 ### Data preparation
-- Loaded training, test, and RUL files from the C-MAPSS FD001 dataset.
-- Defined column names and verified file paths.
-- Dropped **constant-value** columns (columns with a single unique value).
-- Calculated training **RUL** as `max_cycle - time_in_cycles` and **capped RUL at 125** cycles.
-- Set reproducibility seeds (`PYTHONHASHSEED`, `random`, `numpy`, `tensorflow`) with `SEED_VALUE = 42`.
-  
-#### EDA & feature building
-- Basic dataset inspection (shapes, per-engine cycles, feature distributions).
-- Selected feature columns by excluding `engine_id`, `time_in_cycles`, and `RUL`.
+-   Loaded training, test, and RUL files from the C-MAPSS FD001 dataset.
+-   Defined column names and verified file paths.
+-   Dropped **constant-value** columns (columns with a single unique value).
+-   Calculated training **RUL** as `max_cycle - time_in_cycles` and **capped RUL at 125** cycles.
+-   Set reproducibility seeds (`PYTHONHASHSEED`, `random`, `numpy`, `tensorflow`) with `SEED_VALUE = 42`.
+  
+### EDA & feature building
+-   Basic dataset inspection (shapes, per-engine cycles, feature distributions).
+-   Selected feature columns by excluding `engine_id`, `time_in_cycles`, and `RUL`.
+-   Implemented `generate_sequences()` to produce sliding-window sequences for the LSTM model.
+-   Chosen `sequence_length = 50`.
+-   Scaled features using `MinMaxScaler` (fitted on training features and applied to test features).
+-   For the test set, extracted the last `sequence_length` measurements per engine; shorter sequences are zero-padded at the beginning.
 
-#### Sequence generation & scaling
-- Implemented `generate_sequences(df, sequence_length, feature_cols)` to produce sliding-window sequences per `engine_id` and targets = RUL at end of sequence.
-- Chosen `sequence_length = 50`.
-- Scaled features using `MinMaxScaler` (fitted on training features and applied to test features).
-- For the test set, extracted the last `sequence_length` measurements per engine; shorter sequences are zero-padded at the beginning.
+### Model Training
+We implemented a mix of machine learning and deep learning models to tackle the predictive maintenance problem.
 
----
-
-#### Model development
-- Built an LSTM regression model (TensorFlow / Keras) with this architecture:
-  - `LSTM(128, return_sequences=True, input_shape=(sequence_length, num_features))`
-  - `Dropout(0.3)`
-  - `LSTM(64, return_sequences=True, activation='tanh')`
-  - `Dropout(0.3)`
-  - `LSTM(32, activation='tanh')`
-  - `Dropout(0.3)`
-  - `Dense(64, activation='relu')`
-  - `Dense(1)` (regression output for RUL)
+-   **Classification models**: Three models (Random Forest, Gradient Boosting, and SVM) were designed to provide an early warning of potential failures, each offering different strengths in handling complex data.
+-   **Deep learning model**: An LSTM network was built to predict the Remaining Useful Life (RUL) as a continuous value. The architecture included stacked LSTM layers with dropout for regularization and dense layers for regression output.
 
 #### Training configuration
-- EarlyStopping callback: `monitor='val_loss'`, `patience=10`, `restore_best_weights=True`.
-- Training parameters used in the notebook: `epochs=100`, `batch_size=32`, `validation_split=0.2`.
+-   **For all classification models**, we applied an 80/20 train-test split and addressed class imbalance to improve performance on the rare failure class.
+-   **The LSTM** was trained with EarlyStopping to avoid overfitting, using 100 epochs, a batch size of 32, and a 20% validation split.
 
 #### Evaluation
-- Prepared test features and aligned targets from `RUL_FD001.txt`.
-- Implemented evaluation metrics and scoring:
-  - Root Mean Squared Error (RMSE)
-  - R-squared (R²)
-  - NASA C-MAPSS scoring function (`nasa_score` implemented in the notebook)
-- Evaluation code runs predictions on the prepared test sequences and prints RMSE, R², and NASA score.
-
-## Project structure (notebook sections)
-1. **Data Preparation**
-   - Load dataset, define columns, drop constants, calculate and cap RUL.
-2. **EDA + Feature Building**
-   - Inspect data and prepare feature set; set seeds.
-3. **Sequence Generation & Scaling**
-   - Generate sequences (`sequence_length = 50`) and apply `MinMaxScaler`.
-4. **Model Training & Validation**
-   - LSTM model definition and training with EarlyStopping.
-5. **Evaluation**
-   - Predict on test sequences, compute RMSE, R², NASA score.
-6. **Deployment via Web Interface**
-   - Heading present in notebook; deployment implementation not completed.
+-   **Classification models** were assessed using Accuracy, Precision, Recall, and F1-Score, with a strong focus on the “Failure” class due to its business relevance.
+-   **The LSTM regression model** was evaluated with RMSE, R², and the NASA C-MAPSS scoring function, which is standard for this dataset.
 ---
-
-## Submission scope — Current status (EDA)
-
-**Important:** the purpose of this submission is to deliver the *EDA* stage.  
-Other sections in the notebook (model training, evaluation, deployment) exist as development work but are **not** part of the deliverable and remain in progress.
+## Submission scope — Current status (Model Training)
+**Note:** A detailed analysis and comparison of all model performances can be found in a separate file: `Model_Comparison.md`.
 
 ### Not part of this submission (work in progress)
-- Hyperparameter tuning, model checkpointing, or experiment tracking
 - Finalized model export and deployment 
-- Production inference pipeline, monitoring, and alert thresholds
 
 
 ---
