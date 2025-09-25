@@ -53,13 +53,6 @@ We implemented a mix of machine learning and deep learning models to tackle the 
 -   **Classification models** were assessed using Accuracy, Precision, Recall, and F1-Score, with a strong focus on the “Failure” class due to its business relevance. 
 -   **The LSTM regression model** was evaluated with RMSE, R², and the NASA C-MAPSS scoring function, which is standard for this dataset. 
 
---- 
-## Submission scope — Current status (Model Training) 
-**Note:** A detailed analysis and comparison of all model performances can be found in a separate file: `Model_Comparison.md`. 
- 
-### Not part of this submission (work in progress) 
-- Finalized model export and deployment  
-
 ---
 
 ## 📁 Project Structure  
