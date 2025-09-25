@@ -20,13 +20,13 @@ Thumbs.db
 *.log
 
 # Model artifacts
-*.h5
-*.pkl
+# *.h5
+# *.pkl
 *.joblib
 *.sav
 
 # Datasets
-*.txt
+# *.txt
 *.csv
 data/
 datasets/

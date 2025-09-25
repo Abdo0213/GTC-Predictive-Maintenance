@@ -22,7 +22,7 @@ option = st.radio("Choose input method:", ["Upload Log File", "Manual Sensor Inp
 if option == "Upload Log File":
     st.info(f"CSV file must contain exactly these {len(REQUIRED_FEATURES)} columns:\n\n" + ", ".join(REQUIRED_FEATURES))
     engine_id = st.number_input("Engine ID", min_value=1, step=1)
-    uploaded_file = st.file_uploader("Upload sensor log (CSV)", type=["csv"])
+    uploaded_file = st.file_uploader("Upload sensor log (CSV or TXT)", type=["csv", "txt"])
 
     if uploaded_file is not None:
         df = pd.read_csv(uploaded_file)
