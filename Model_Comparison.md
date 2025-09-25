@@ -33,7 +33,32 @@ This project implements and compares multiple machine learning models for predic
 - Computationally intensive
 - Complex architecture may be overkill for simpler patterns
 ---
-### 2. Random Forest Classifier (Tree-based Classification)
+### 2. GRU Neural Network (Deep Learning)
+**Architecture**: Multi-layer GRU with sequence processing
+
+**Key Specifications**:
+- Input: Sequences of 50 time steps
+- Architecture: GRU(128) → Dropout(0.3) → GRU(64) → Dropout(0.3) → GRU(32) → Dense(64) → Dense(1)
+- Features: 17 sensor/setting features (after removing constant columns)
+- Data preprocessing: MinMax scaling, sequence generation
+
+**Performance**:
+- **Accuracy**: 88.98%
+- **RMSE**: 13.80
+- **R²**: 0.89
+- **MAE**: 10.33
+- **NASA Score**: 299.28
+
+**Strengths**:
+- Captures sequential dependencies with fewer parameters than LSTM
+- Similar predictive strength to LSTM
+- Faster training due to simplified architecture
+
+**Limitations**:
+- Still computationally expensive compared to tree models
+- Requires careful tuning and preprocessing
+---
+### 3. Random Forest Classifier (Tree-based Classification)
 **Approach**: Ensemble method treating the problem as binary classification
 
 **Key Specifications**:
@@ -60,7 +85,7 @@ This project implements and compares multiple machine learning models for predic
 - Threshold-dependent (30-cycle cutoff)
 - May miss gradual degradation patterns
 ---
-### 3. Gradient Boosting Classifier (Advanced Tree-based Classification)
+### 4. Gradient Boosting Classifier (Advanced Tree-based Classification)
 **Approach**: Sequential tree building with error correction
 
 **Key Specifications**:
@@ -86,7 +111,7 @@ This project implements and compares multiple machine learning models for predic
 - Binary output limitation
 - More prone to overfitting than Random Forest
 ---
-### 4. Support Vector Machine (SVM) Classifier
+### 5. Support Vector Machine (SVM) Classifier
 **Approach**: Maximum margin classification with RBF kernel
 
 **Key Specifications**:
@@ -118,14 +143,15 @@ This project implements and compares multiple machine learning models for predic
 | Model | Accuracy/R² | Precision | Recall | F1-Score | Key Advantage |
 |-------|-------------|-----------|--------|----------|---------------|
 | **LSTM** | 88.85% (R²: 0.89) | - | - | - | Temporal patterns, RUL prediction |
+| **GRU** | 88.98% (R²: 0.89) | - | - | - | Similar to LSTM, faster training |
 | **Random Forest** | 96.93% | 0.95 | 0.85 | 0.90 | **Best balance** of precision/recall |
 | **Gradient Boosting** | 96.50% | 0.92 | 0.85 | 0.88 | Good overall performance |
 | **SVM** | 94.86% | 0.76 | **0.97** | 0.86 | **Highest recall** - minimal missed failures |
 
 ## Key Insights and Trade-offs
 
-### 1. **LSTM vs Classification Models**
-- **LSTM**: Provides actual RUL values but requires more complex preprocessing
+### 1. **LSTM vs GRU vs Classification Models**
+- **LSTM/GRU**: Provide actual RUL values but require more complex preprocessing
 - **Classification Models**: Simpler binary decision but lose granular RUL information
 
 ### 2. **Precision vs Recall Trade-off**
@@ -142,7 +168,7 @@ This project implements and compares multiple machine learning models for predic
 - Choose **SVM** for maximum recall (97% failure detection)
 
 **For Detailed Maintenance Planning (need specific RUL values)**:
-- Choose **LSTM** for continuous RUL estimation
+- Choose **LSTM** or **GRU** for continuous RUL estimation
 
 ## Recommendations
 
@@ -156,8 +182,8 @@ This project implements and compares multiple machine learning models for predic
 - **Use Case**: High-stakes environments where failure consequences are severe
 - **Trade-off**: Accept more false alarms for maximum safety
 
-### Specialized Use Case: **LSTM Neural Network**
-- **Why**: Provides actual RUL values and captures temporal dependencies
+### Specialized Use Case: **LSTM / GRU Neural Networks**
+- **Why**: Provide actual RUL values and capture temporal dependencies
 - **Use Case**: When detailed maintenance scheduling is required
 - **Consideration**: More complex to implement and maintain
 
@@ -174,7 +200,7 @@ All models benefited significantly from advanced feature engineering:
 The choice of model depends on specific operational requirements:
 - **Random Forest** offers the best general-purpose solution
 - **SVM** maximizes failure detection at the cost of more false alarms  
-- **LSTM** provides detailed RUL predictions for advanced planning
+- **LSTM/GRU** provide detailed RUL predictions for advanced planning
 - **Gradient Boosting** offers solid performance as an alternative to Random Forest
 
 Each model has proven effective for predictive maintenance, with the key being to align model selection with operational priorities and constraints.
